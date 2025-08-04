@@ -1,52 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Embedded PDF Viewer</title>
+  <meta charset="utf-8" />
+  <title>PDF Viewer</title>
   <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
   <style>
-    html, body {
+    html, body, #adobe-dc-view {
+      height: 100%;
+      width: 100%;
       margin: 0;
       padding: 0;
-      height: 100%;
-    }
-    #adobe-dc-view {
-      height: 100vh;
-      width: 100%;
     }
   </style>
 </head>
 <body>
   <div id="adobe-dc-view"></div>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const pdfUrl = urlParams.get("pdf");
 
-  <script type="text/javascript">
     document.addEventListener("adobe_dc_view_sdk.ready", function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      const fileURL = urlParams.get('pdf');
-
-      if (!fileURL) {
-        document.getElementById("adobe-dc-view").innerHTML = "<p style='padding:20px;'>No PDF URL provided. Please pass the PDF link using <code>?pdf=</code> query string.</p>";
+      if (!pdfUrl) {
+        document.body.innerHTML = "<p>No PDF URL provided.</p>";
         return;
       }
 
-      var adobeDCView = new AdobeDC.View({
-        clientId: "7b549b677ff64f0fa22f02d0a9953360",  // 👈 Replace with your actual Adobe Embed API Client ID
+      const adobeDCView = new AdobeDC.View({
+        clientId: "7b549b677ff64f0fa22f02d0a9953360", // Replace with your Adobe Embed API Client ID
         divId: "adobe-dc-view"
       });
 
-      adobeDCView.previewFile({
-        content: {
-          location: { url: fileURL }
+      adobeDCView.previewFile(
+        {
+          content: {
+            location: {
+              url: pdfUrl
+            }
+          },
+          metaData: {
+            fileName: "Document.pdf"
+          }
         },
-        metaData: { fileName: "Document.pdf" }
-      }, {
-        embedMode: "IN_LINE",   // Options: IN_LINE, FULL_WINDOW, etc.
-        showPrintPDF: true,
-        showDownloadPDF: true,
-        showAnnotationTools: false
-      });
+        {
+          embedMode: "SIZED_CONTAINER"
+        }
+      );
     });
   </script>
 </body>
 </html>
-
